@@ -1,0 +1,10 @@
+.env
+.vscode
+chroma_persist
+.DS_Store
+venv
+*.vscode/
+.python-version
+_vegafusion*
+data/*
+adhoc*
