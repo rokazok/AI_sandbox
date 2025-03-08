@@ -90,7 +90,7 @@ def get_joke(
     # Query parameter- if user provides a subject, include it in the prompt
     subject = ""
     if about:
-        subject = f"about {about}"
+        subject = f" about {about}"
     if type == JokeType.generic:
         type = ""
 

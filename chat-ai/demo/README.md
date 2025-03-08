@@ -1,0 +1,1 @@
+The files in this folder are not part of the app. Instead, they are self-contained examples to test and troubleshoot components of the shiny app.
