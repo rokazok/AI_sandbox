@@ -9,7 +9,8 @@ from requests.exceptions import HTTPError
 import time
 
 
-MODEL = 'google/gemini-2.0-flash-lite-preview-02-05:free'
+#MODEL = 'google/gemini-2.0-flash-lite-preview-02-05:free'
+MODEL = 'google/gemma-3-1b-it:free'
 """more options to try
 meta-llama/llama-3.2-1b-instruct:free
 microsoft/phi-3-mini-128k-instruct:free

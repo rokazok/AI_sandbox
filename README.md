@@ -4,7 +4,9 @@ This sandbox contains small working examples of different concepts or libraries 
 Each folder is a standalone example.
 
 1. [basic_llm_call](basic_llm_call/README.md): Python example for querying an LLM
-2. [API](api/README.md): Use FastAPI to set up an API (for querying the LLM    )
+2. [API](api/README.md): Use FastAPI to set up an API (for querying the LLM)
+3. [chatbot app](chatbot_app/README.md): Chatbot in a shiny app with UI to control outputs.
+4.
 
 # Prerequisites
 ## Libraries
@@ -16,7 +18,7 @@ This installs `pyenv`, which allows us to dictate the Python version and create 
 The script then creates a virtual environment `sandbox` and installs our dependencies.
 
 ## API keys
-This repo uses an API key from OpenRouter. Create one here, then add it to your `.bash_profile`, `.zprofile`, or `.zshenv`.
+This repo uses an API key from [OpenRouter](https://openrouter.ai/settings/keys). Create one there, then add it to your `.bash_profile`, `.zprofile`, or `.zshenv`.
 
 ```bash
 echo 'export OPENROUTER_API_KEY=<YOUR KEY HERE>' >> ~/.zprofile

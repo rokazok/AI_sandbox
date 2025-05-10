@@ -1,5 +1,6 @@
 .env
 .vscode
+*__pycache__*
 chroma_persist
 .DS_Store
 venv
@@ -8,3 +9,4 @@ venv
 _vegafusion*
 data/*
 adhoc*
+rag/chroma*
