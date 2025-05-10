@@ -5,7 +5,7 @@ LLMs have limitations, including limited specialty knowledge or lack of knowledg
 3. The LLM references the context when inferring an answer.
 
 The result of this demo:
-![RAG demo](https://drive.google.com/file/d/1x9ND51sIzMB1gUoIe2sMYgSbjeW475i8/view?usp=drive_link)
+![RAG demo](https://github.com/user-attachments/assets/7523d977-ccf6-4716-b488-1b9bb121cb6b)
 
 
 In more detail, RAG includes:
