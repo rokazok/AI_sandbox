@@ -47,7 +47,7 @@ slider = alt.binding_range(
     min=min_year,
     max=max_year,
     step=1,
-    name='Year'
+    name='    Year'
 )
 
 select_year = alt.selection_point(
@@ -69,6 +69,7 @@ select_country = alt.selection_point(
     fields=['name'],
     toggle=True,
     on='click',
+    empty='none',  # No countries selected by default
 )
 
 # This functionality does not exist
@@ -126,7 +127,7 @@ text_chart = alt.Chart(df).mark_text(
     # Only show the text if the country is in the `select_country` selection
     text=alt.condition(select_country, 'name:N', alt.value('')),
     # We need to explicitly define the other encodings to avoid inheriting from base_chart
-    x=alt.X('gdppercapita_us_inflation_adjusted:Q',),
+    x=alt.X('gdppercapita_us_inflation_adjusted:Q'),
     y=alt.Y('life_expectancy_at_birth_data_from_ihme:Q'),
 ).transform_filter(
     select_country, # Filter to show labels only for selected countries
@@ -156,7 +157,7 @@ title_text = alt.Chart(df).mark_text(
 final_chart = alt.vconcat(title_text, layered_chart,
     title='Gapminder-style Data over Time'
 ).interactive()
-final_chart
+
 # 9. Save the chart as an HTML file.
 final_chart.save('interactive_gapminder_chart.html')
 
