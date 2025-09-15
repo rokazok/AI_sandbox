@@ -1,0 +1,7 @@
+shiny
+shinywidgets
+numpy
+pandas
+plotly
+matplotlib
+shiny.express

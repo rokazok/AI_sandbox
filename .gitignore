@@ -10,3 +10,4 @@ _vegafusion*
 data/*
 adhoc*
 rag/chroma*
+*/.env

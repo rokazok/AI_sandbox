@@ -3,10 +3,10 @@ import os
 import httpx
 from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
+from datetime import datetime, timedelta
 
 load_dotenv()
 GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
-GOOGLE_WEATHER_API_KEY = os.getenv("GOOGLE_WEATHER_API_KEY")
 
 mcp = FastMCP("google_maps")
 
@@ -127,25 +127,107 @@ async def get_directions(
 @mcp.tool()
 async def get_weather(
     latitude: float,
-    longitude: float
+    longitude: float,
+    start: str = None,
+    end: str = None
 ) -> str:
     """
-    Get current weather for a location using Google Weather API.
+    Get a next 10 days weather forecast for a location using Google Weather API.
 
     Args:
         latitude (float): Latitude of the location.
         longitude (float): Longitude of the location.
+        start (str, optional): Start datetime in ISO format (YYYY-MM-DD or YYYY-MM-DD HH:MM). If None, start is today at 00:00.
+        end (str, optional): End datetime in ISO format (YYYY-MM-DD or YYYY-MM-DD HH:MM). If None, end is today + 10 days at 23:59.
 
     Returns:
-        str: Current temperature and weather condition, or error message.
+        str: Formatted table of weather forecast for the specified timeframe.
     """
-    url = f"https://weather.googleapis.com/v1/currentConditions:get?location={latitude},{longitude}&key={GOOGLE_WEATHER_API_KEY}"
+    def parse_datetime(dt_str: str, is_start: bool) -> datetime:
+        if not dt_str:
+            return None
+        try:
+            # Try full datetime first
+            return datetime.strptime(dt_str, "%Y-%m-%d %H:%M")
+        except ValueError:
+            try:
+                # Fallback to date only
+                date = datetime.strptime(dt_str, "%Y-%m-%d")
+                if is_start:
+                    return date.replace(hour=0, minute=0)
+                else:
+                    return date.replace(hour=23, minute=59)
+            except ValueError:
+                return None
+
+    today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    ten_days_later = today + timedelta(days=10)
+
+    start_datetime = parse_datetime(start, is_start=True) if start else today
+    end_datetime = parse_datetime(end, is_start=False) if end else ten_days_later.replace(hour=23, minute=59)
+
+    if start_datetime > ten_days_later or end_datetime < today:
+        return f"Requested interval {start_datetime} - {end_datetime} does not overlap with the next 10 days from {today} - {ten_days_later}."
+
+    url = (
+        f"https://weather.googleapis.com/v1/forecast/hours:lookup"
+        f"?key={GOOGLE_MAPS_API_KEY}"
+        f"&location.latitude={latitude}&location.longitude={longitude}"
+        f"&hours=240&pageSize=240"
+    )
     result = await async_get(url)
-    if not result:
-        return "Weather API error."
-    temp = result.get("temperature", {}).get("celsius", "N/A")
-    condition = result.get("conditionCode", "N/A")
-    return f"Current Temperature: {temp}°C\nCondition: {condition}"
+    if not result or "forecastHours" not in result:
+        return "Weather API error or no forecast data available."
+
+    # Convert temperature to Fahrenheit
+    def c_to_f(celsius):
+        if celsius == "N/A":
+            return "N/A"
+        return round((float(celsius) * 9/5) + 32, 1)
+
+    # Table header
+    output = ["DateTime | Weather | Temp°F | Feels Like | Rain% | Wind | Humidity"]
+    output.append("-" * 75)  # Separator line
+
+    forecast_hours = result["forecastHours"]
+    for hour in forecast_hours:
+        dt = hour.get("displayDateTime", {})
+        date_str = f"{dt.get('year', '')}-{dt.get('month', ''):02d}-{dt.get('day', ''):02d} {dt.get('hours', ''):02d}:00"
+        
+        # Skip if outside requested timeframe
+        if start_datetime and date_str < start_datetime:
+            continue
+        if end_datetime and date_str > end_datetime:
+            continue
+
+        weather = hour.get("weatherCondition", {}).get("type", "N/A")
+        temp = c_to_f(hour.get("temperature", {}).get("degrees", "N/A"))
+        feels_like = c_to_f(hour.get("feelsLikeTemperature", {}).get("degrees", "N/A"))
+        precip = hour.get("precipitation", {}).get("probability", {}).get("percent", 0)
+        
+        wind = hour.get("wind", {})
+        wind_speed = wind.get("speed", {}).get("value", "N/A")
+        wind_dir = wind.get("direction", {}).get("cardinal", "")
+        wind_str = f"{wind_speed}km/h {wind_dir}"
+        
+        humidity = hour.get("relativeHumidity", "N/A")
+
+        # Format each row with consistent spacing
+        row = (
+            f"{date_str} | "
+            f"{weather:<12} | "
+            f"{temp:>5} | "
+            f"{feels_like:>9} | "
+            f"{precip:>4}% | "
+            f"{wind_str:<12} | "
+            f"{humidity}%"
+        )
+        output.append(row)
+
+    if len(output) <= 2:  # Only header and separator
+        return "No weather data available for the specified timeframe."
+
+    return "\n".join(output)
 
 # @mcp.tool()
 # async def render_static_route_map(

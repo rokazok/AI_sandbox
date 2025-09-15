@@ -6,9 +6,13 @@ Each folder is a standalone example.
 1. [basic_llm_call](basic_llm_call/README.md): Python example for querying an LLM
 2. [API](api/README.md): Use FastAPI to set up an API (for querying the LLM)
 3. [chatbot app](chatbot_app/README.md): Chatbot in a shiny app with UI to control outputs.
-4.
+4. [RAG](rag/README.md): Retrieval Augmented Generation- provide a website to give the chatbot more context.
+5. [models](models/README.md): template models
+6. [plots](plots/README.md):
 
 # Prerequisites
+Note: This repo is part-way through migrating from `pyenv` to `uv`.
+
 ## Libraries
 Set up the local environment with
 ```bash

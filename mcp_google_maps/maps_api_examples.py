@@ -1,7 +1,7 @@
 import requests
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv() or load_dotenv('mcp_google_maps/.env')
 API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
 
 # Coordinates for the search location (e.g., San Francisco)
@@ -126,8 +126,14 @@ API_KEY = "YOUR_API_KEY"
 location_lat = 37.7937
 location_lng = -122.3965
 
+# Seattle
+location_lat = 47.6061
+location_lng = -122.3328
+
 # Define the endpoint URL with query parameters
 url = f"https://weather.googleapis.com/v1/currentConditions:get?location={location_lat},{location_lng}&key={API_KEY}"
+url = f"https://weather.googleapis.com/v1/forecast/days:lookup?key={API_KEY}&location.latitude={location_lat}&location.longitude={location_lng}&days=10&pageSize=10"
+url = f"https://weather.googleapis.com/v1/forecast/hours:lookup?key={API_KEY}&location.latitude={location_lat}&location.longitude={location_lng}&hours=240&pageSize=240"
 
 # Make the GET request
 response = requests.get(url)

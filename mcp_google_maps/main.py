@@ -52,7 +52,6 @@ def get_outdoor_seating_advice(weather, context):
 def main():
     load_dotenv()
     google_maps_api_key = os.getenv("GOOGLE_MAPS_API_KEY")
-    google_weather_api_key = os.getenv("GOOGLE_WEATHER_API_KEY")
     mcp_server_url = os.getenv("MCP_SERVER_URL")
 
     print("Welcome to the Restaurant Finder App!")
@@ -63,7 +62,7 @@ def main():
     print(f"Parsed context: {context}")
 
     # Step 2: Get weather forecast for requested location/time
-    weather = get_weather_forecast(context, google_weather_api_key, mcp_server_url)
+    weather = get_weather_forecast(context, google_maps_api_key, mcp_server_url)
     print(f"Weather forecast: {weather}")
 
     # Step 3: Search for restaurants near location, filter by cuisine/rating
